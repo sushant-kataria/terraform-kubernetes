@@ -85,18 +85,6 @@ stages:
                     displayName: 'Terraform Init before Apply'
                     backendServiceArm: 'terraform-spn-akspipeline'
 
-                - script: |
-                    echo "Checking for locked state..."
-                    terraform init -input=false
-                    terraform plan -lock=false -out=tfplan || (
-                      echo "Plan failed. Attempting to force unlock..."
-                      terraform force-unlock -force d00c2f52-19f4-f5ae-2a6a-d4beda36b2c9 || true
-                      echo "Retrying terraform plan after unlock..."
-                      terraform plan -lock=false -out=tfplan
-                    )
-                  displayName: "Safe Retry Plan with Unlock Fallback"
-                  condition: always()
-
                 - task: TerraformTaskV4@4
                   displayName: 'Terraform Apply with Auto-Approve'
                   inputs:
