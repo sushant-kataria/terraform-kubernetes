@@ -61,6 +61,6 @@ module "aks" {
 resource "azurerm_role_assignment" "aks_acr_pull" {
   role_definition_name = "AcrPull"
   principal_id         = module.aks.kubelet_identity[0].object_id
-  scope                = azurerm_container_registry.acr.id
+  scope                = module.acr.acr_id
   depends_on           = [module.aks, module.acr]
 }
