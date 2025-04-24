@@ -14,7 +14,7 @@ pool:
 variables:
   - group: bitbucket-auth  # BITBUCKET_USERNAME & BITBUCKET_APP_PASSWORD
   - name: destroy_initiate
-    value: 'false'          # Toggle true to enable destroy
+    value: 'false'          # Toggle to 'true' to enable destroy
 
 stages:
   - stage: TerraformInit
@@ -26,6 +26,7 @@ stages:
           - template: .pipelines/templates/terraform-init.yml
             parameters:
               displayName: 'Terraform Init with Azure Backend'
+              backendServiceArm: 'terraform-azure-prod'
 
           - script: |
               git config --global url."https://${BITBUCKET_USERNAME}:${BITBUCKET_APP_PASSWORD}@bitbucket.org/".insteadOf "https://bitbucket.org/"
@@ -69,7 +70,7 @@ stages:
             inputs:
               provider: 'azurerm'
               command: 'plan'
-              
+              environmentServiceNameAzureRM: 'terraform-azure-prod'
 
   - stage: TerraformApply
     displayName: 'Terraform Apply'
@@ -78,7 +79,7 @@ stages:
     jobs:
       - deployment: Apply
         displayName: 'Apply Infrastructure Changes'
-        environment: 'prod'  # Manual approval in DevOps UI
+        environment: 'prod'  # Add manual approval in Environments > prod
         strategy:
           runOnce:
             deploy:
@@ -92,7 +93,7 @@ stages:
                   inputs:
                     provider: 'azurerm'
                     command: 'apply'
-                    
+                    environmentServiceNameAzureRM: 'terraform-azure-prod'
                     args: '-auto-approve'
 
   - stage: TerraformDestroy
@@ -102,7 +103,7 @@ stages:
     jobs:
       - deployment: Destroy
         displayName: 'Destroy Infrastructure'
-        environment: 'prod'  # Manual approval in DevOps UI
+        environment: 'prod'
         strategy:
           runOnce:
             deploy:
@@ -116,5 +117,5 @@ stages:
                   inputs:
                     provider: 'azurerm'
                     command: 'destroy'
-                    
+                    environmentServiceNameAzureRM: 'terraform-azure-prod'
                     args: '-auto-approve'
