@@ -26,7 +26,7 @@ stages:
           - template: .pipelines/templates/terraform-init.yml
             parameters:
               displayName: 'Terraform Init with Azure Backend'
-              backendServiceArm: 'terraform-azure-prod'
+              backendServiceArm: 'terraform-spn-akspipeline'
 
   - stage: TerraformValidate
     displayName: 'Terraform Validate'
@@ -39,7 +39,7 @@ stages:
           - template: .pipelines/templates/terraform-init.yml
             parameters:
               displayName: 'Terraform Init before Validate'
-              backendServiceArm: 'terraform-azure-prod'
+              backendServiceArm: 'terraform-spn-akspipeline'
 
           - task: TerraformTaskV4@4
             displayName: 'Terraform Validate'
@@ -58,14 +58,14 @@ stages:
           - template: .pipelines/templates/terraform-init.yml
             parameters:
               displayName: 'Terraform Init before Plan'
-              backendServiceArm: 'terraform-azure-prod'
+              backendServiceArm: 'terraform-spn-akspipeline'
 
           - task: TerraformTaskV4@4
             displayName: 'Terraform Plan'
             inputs:
               provider: 'azurerm'
               command: 'plan'
-              environmentServiceNameAzureRM: 'terraform-azure-prod'
+              environmentServiceNameAzureRM: 'terraform-spn-akspipeline'
 
   - stage: TerraformApply
     displayName: 'Terraform Apply'
@@ -83,7 +83,7 @@ stages:
                 - template: .pipelines/templates/terraform-init.yml
                   parameters:
                     displayName: 'Terraform Init before Apply'
-                    backendServiceArm: 'terraform-azure-prod'
+                    backendServiceArm: 'terraform-spn-akspipeline'
 
                 - task: TerraformTaskV4@4
                   displayName: 'Terraform Apply with Auto-Approve'
@@ -109,7 +109,7 @@ stages:
                 - template: .pipelines/templates/terraform-init.yml
                   parameters:
                     displayName: 'Terraform Init before Destroy'
-                    backendServiceArm: 'terraform-azure-prod'
+                    backendServiceArm: 'terraform-spn-akspipeline'
 
                 - task: TerraformTaskV4@4
                   displayName: 'Terraform Destroy with Auto-Approve'
