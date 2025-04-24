@@ -69,7 +69,7 @@ stages:
             inputs:
               provider: 'azurerm'
               command: 'plan'
-              environmentServiceNameAzureRM: 'Prod(202d4be6-e0dd-49be-84b7-e25d532f318a)'
+              
 
   - stage: TerraformApply
     displayName: 'Terraform Apply'
@@ -92,7 +92,7 @@ stages:
                   inputs:
                     provider: 'azurerm'
                     command: 'apply'
-                    environmentServiceNameAzureRM: 'Prod(202d4be6-e0dd-49be-84b7-e25d532f318a)'
+                    
                     args: '-auto-approve'
 
   - stage: TerraformDestroy
@@ -116,5 +116,5 @@ stages:
                   inputs:
                     provider: 'azurerm'
                     command: 'destroy'
-                    environmentServiceNameAzureRM: 'Prod(202d4be6-e0dd-49be-84b7-e25d532f318a)'
+                    
                     args: '-auto-approve'
