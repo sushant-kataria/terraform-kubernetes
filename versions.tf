@@ -11,11 +11,6 @@ provider "azurerm" {
   subscription_id = "202d4be6-e0dd-4b9e-84b7-e235d53271a8"
 }
 
-│terraform {
-  backend "azurerm" {
-    resource_group_name  = "NEWRG"
-    storage_account_name = "azurekssvc"
-    container_name       = "terraform"
-    key                  = "terraform.tfstate"
-  }
+
+backend "azurerm" {}
 }
