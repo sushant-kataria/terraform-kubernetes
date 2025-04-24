@@ -25,8 +25,11 @@ steps:
 
 
 - script: |
-    git config --global url."https://$(BITBUCKET_USERNAME):$(BITBUCKET_APP_PASSWORD)@bitbucket.org/".insteadOf "https://bitbucket.org/"
+    git config --global url."https://${BITBUCKET_USERNAME}:${BITBUCKET_APP_PASSWORD}@bitbucket.org/".insteadOf "https://bitbucket.org/"
   displayName: 'Inject Bitbucket Credentials into Git Config'
+  env:
+    BITBUCKET_USERNAME: $(BITBUCKET_USERNAME)
+    BITBUCKET_APP_PASSWORD: $(BITBUCKET_APP_PASSWORD)
 
 - task: TerraformTaskV4@4
   inputs:
