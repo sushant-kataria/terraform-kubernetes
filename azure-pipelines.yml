@@ -90,7 +90,7 @@ stages:
                   inputs:
                     provider: 'azurerm'
                     command: 'apply'
-                    environmentServiceNameAzureRM: 'terraform'
+                    environmentServiceNameAzureRM: 'terraform-spn-akspipeline'
                     args: '-auto-approve'
 
   - stage: TerraformDestroy
@@ -116,5 +116,5 @@ stages:
                   inputs:
                     provider: 'azurerm'
                     command: 'destroy'
-                    environmentServiceNameAzureRM: 'terraform'
+                    environmentServiceNameAzureRM: 'terraform-spn-akspipeline'
                     args: '-auto-approve'
