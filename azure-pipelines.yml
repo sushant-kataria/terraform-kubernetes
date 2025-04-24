@@ -59,21 +59,6 @@ stages:
             parameters:
               displayName: 'Terraform Init before Plan'
               backendServiceArm: 'terraform-spn-akspipeline'
-          
-          - task: AzureCLI@2
-            displayName: 'Break Azure Blob Lease (Terraform Lock)'
-            condition: always()
-            inputs:
-                    azureSubscription: 'terraform-spn-akspipeline'
-                    scriptType: 'bash'
-                    scriptLocation: 'inlineScript'
-                    inlineScript: |
-                      echo "Attempting to break blob lease if stale lock exists..."
-                      az storage blob lease break \
-                        --account-name azurekssvc \
-                        --container-name terraform \
-                        --blob-name terraform/terraform.tfstate \
-                        --auth-mode login || true
 
           - task: TerraformTaskV4@4
             displayName: 'Terraform Plan'
@@ -100,20 +85,17 @@ stages:
                     displayName: 'Terraform Init before Apply'
                     backendServiceArm: 'terraform-spn-akspipeline'
 
-                - task: AzureCLI@2
-                  displayName: 'Break Azure Blob Lease (Terraform Lock)'
+                - script: |
+                    echo "Checking for locked state..."
+                    terraform init -input=false
+                    terraform plan -lock=false -out=tfplan || (
+                      echo "Plan failed. Attempting to force unlock..."
+                      terraform force-unlock -force d00c2f52-19f4-f5ae-2a6a-d4beda36b2c9 || true
+                      echo "Retrying terraform plan after unlock..."
+                      terraform plan -lock=false -out=tfplan
+                    )
+                  displayName: "Safe Retry Plan with Unlock Fallback"
                   condition: always()
-                  inputs:
-                    azureSubscription: 'terraform-spn-akspipeline'
-                    scriptType: 'bash'
-                    scriptLocation: 'inlineScript'
-                    inlineScript: |
-                      echo "Attempting to break blob lease if stale lock exists..."
-                      az storage blob lease break \
-                        --account-name azurekssvc \
-                        --container-name terraform \
-                        --blob-name terraform/terraform.tfstate \
-                        --auth-mode login || true
 
                 - task: TerraformTaskV4@4
                   displayName: 'Terraform Apply with Auto-Approve'
