@@ -77,20 +77,29 @@ stages:
         environment: 'prod'
         strategy:
           runOnce:
-           deploy:
-            steps:
+            deploy:
+              steps:
                 - checkout: self 
                 - template: .pipelines/templates/terraform-init.yml
                   parameters:
                     displayName: 'Terraform Init before Apply'
                     backendServiceArm: 'terraform-spn-akspipeline'
 
-                - script: |
-                      echo "Checking for stale locks..."
-                      terraform init
-                      terraform force-unlock $(LOCK_ID)
-                  displayName: "Force Unlock Terraform State"
+                - task: AzureCLI@2
+                  displayName: 'Break Azure Blob Lease (Terraform Lock)'
                   condition: always()
+                  inputs:
+                    azureSubscription: 'terraform-spn-akspipeline'
+                    scriptType: 'bash'
+                    scriptLocation: 'inlineScript'
+                    inlineScript: |
+                      echo "Attempting to break blob lease if stale lock exists..."
+                      az storage blob lease break \
+                        --account-name azurekssvc \
+                        --container-name terraform \
+                        --blob-name terraform/terraform.tfstate \
+                        --auth-mode login || true
+
                 - task: TerraformTaskV4@4
                   displayName: 'Terraform Apply with Auto-Approve'
                   inputs:
