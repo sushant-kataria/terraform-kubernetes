@@ -6,7 +6,7 @@ acr_admin_enabled   = false
 
 cluster_name       = "demoaks"
 dns_prefix         = "demoaks-dns"
-kubernetes_version = "1.30.0"
+kubernetes_version = "1.30.9"
 
 default_node_pool = {
   name                 = "sp"
@@ -17,7 +17,7 @@ default_node_pool = {
   max_pods             = 110
   os_disk_size_gb      = 30
   zones                = ["1", "2", "3"]
-  orchestrator_version = "1.30.0"
+  orchestrator_version = "1.30.9"
 }
 
 network_profile = {
