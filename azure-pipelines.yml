@@ -48,6 +48,10 @@ stages:
       - job: Validate
         displayName: 'Validate Terraform Files'
         steps:
+          - task: TerraformInstaller@1
+            displayName: 'Install Terraform'
+            inputs:
+              terraformVersion: 'latest'
           - task: TerraformTaskV4@4
             displayName: 'Terraform Validate'
             inputs:
@@ -61,6 +65,10 @@ stages:
       - job: Plan
         displayName: 'Plan Terraform Deployment'
         steps:
+          - task: TerraformInstaller@1
+            displayName: 'Install Terraform'
+            inputs:
+              terraformVersion: 'latest'
           - task: TerraformTaskV4@4
             displayName: 'Terraform Plan'
             inputs:
@@ -70,7 +78,7 @@ stages:
   - stage: TerraformApply
     displayName: 'Terraform Apply'
     dependsOn: TerraformPlan
-    condition: succeeded()
+    condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'main'))
     jobs:
       - deployment: Apply
         displayName: 'Apply Infrastructure Changes'
@@ -79,6 +87,10 @@ stages:
           runOnce:
             deploy:
               steps:
+                - task: TerraformInstaller@1
+                  displayName: 'Install Terraform'
+                  inputs:
+                   terraformVersion: 'latest'
                 - task: TerraformTaskV4@4
                   displayName: 'Terraform Apply with Auto-Approve'
                   inputs:
@@ -89,7 +101,7 @@ stages:
   - stage: TerraformDestroy
     displayName: 'Terraform Destroy'
     dependsOn: TerraformApply
-    condition: and(succeeded(), eq(variables['destroy_initiate'], 'true'))
+    condition: and(succeeded(), eq(variables['Build.SourceBranchName'], 'main'), eq(variables['destroy_initiate'], 'true'))
     jobs:
       - deployment: Destroy
         displayName: 'Destroy Infrastructure'
@@ -98,6 +110,10 @@ stages:
           runOnce:
             deploy:
               steps:
+                - task: TerraformInstaller@1
+                  displayName: 'Install Terraform'
+                  inputs:
+                    terraformVersion: 'latest'
                 - task: TerraformTaskV4@4
                   displayName: 'Terraform Destroy with Auto-Approve'
                   inputs:
