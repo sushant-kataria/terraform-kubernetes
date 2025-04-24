@@ -1,12 +1,12 @@
 module "resource_group" {
-  source = "git::https://shaurya123@bitbucket.org/azure-aks-modules/modules//resource_group?ref=main"
+  source = "git::https://bitbucket.org/shaurya123/azure-aks-modules.git//modules/resource_group?ref=main"
   resource_group_name = var.resource_group_name
   location            = var.location
   tags                = var.tags
 }
 
 module "acr" {
-  source              = "git::https://shaurya123@bitbucket.org/azure-aks-modules/modules//acr?ref=main"
+  source              = "git::https://bitbucket.org/shaurya123/azure-aks-modules.git//modules/acr?ref=main"
   name                = var.acr_name
   resource_group_name = module.resource_group.resource_group_name
   location            = var.location
@@ -18,7 +18,7 @@ module "acr" {
 
 
 module "network" {
- source = "git::https://shaurya123@bitbucket.org/azure-aks-modules/modules//network?ref=main"
+ source = "git::https://bitbucket.org/shaurya123/azure-aks-modules.git//modules/network?ref=main"
   vnet_name                       = var.vnet_name
   vnet_address_space              = var.vnet_address_space
   aks_subnet_name                 = var.aks_subnet_name
@@ -35,7 +35,7 @@ module "network" {
 module "aks" {
   system_node_pool    = var.system_node_pool
   user_node_pool      = var.user_node_pool
-  source = "git::https://shaurya123@bitbucket.org/azure-aks-modules/modules//aks?ref=main"
+  source = "git::https://bitbucket.org/shaurya123/azure-aks-modules.git//modules/aks?ref=main"
   resource_group_name = module.resource_group.resource_group_name
   location            = var.location
   cluster_name        = var.cluster_name
