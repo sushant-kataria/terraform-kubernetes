@@ -67,3 +67,4 @@ user_node_pool = {
 
 service_cidr   = "10.240.0.0/16"
 dns_service_ip = "10.240.0.10"
+subscription_id = "202d4be6-e0dd-4b9e-84b7-e235d53271a8"
