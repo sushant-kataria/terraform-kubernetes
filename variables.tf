@@ -70,3 +70,8 @@ variable "dns_service_ip" {
   type        = string
   description = "DNS IP address within the service CIDR"
 }
+
+variable "subscription_id" {
+  description = "The Azure subscription ID."
+  type        = string
+}
