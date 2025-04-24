@@ -58,11 +58,17 @@ module "aks" {
   depends_on = [module.resource_group, module.acr]
 }
 
-
+# Assign Owner role to the Terraform identity at the subscription level
+resource "azurerm_role_assignment" "terraform_owner" {
+  scope                = "/subscriptions/${var.subscription_id}"
+  role_definition_name = "Owner"
+  principal_id         = var.terraform_principal_id # Replace with the object ID of the Terraform identity
+}
 
 resource "azurerm_role_assignment" "aks_acr_pull" {
   role_definition_name = "AcrPull"
   principal_id         = module.aks.kubelet_identity[0].object_id
-  scope                = module.acr.acr_id
+  // scope                = module.acr.acr_id
+  scope                 = azurerm_container_registry.acr.id
   depends_on           = [module.aks, module.acr]
 }
