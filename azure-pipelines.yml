@@ -18,10 +18,7 @@ stages:
       - job: Init
         displayName: 'Initialize Terraform'
         steps:
-          - task: TerraformInstaller@1
-            displayName: 'Install Terraform'
-            inputs:
-              terraformVersion: 'latest'
+           - template: .pipelines/templates/terraform-init.yml
 
           - script: |
               git config --global url."https://${BITBUCKET_USERNAME}:${BITBUCKET_APP_PASSWORD}@bitbucket.org/".insteadOf "https://bitbucket.org/"
@@ -30,17 +27,6 @@ stages:
               BITBUCKET_USERNAME: $(BITBUCKET_USERNAME)
               BITBUCKET_APP_PASSWORD: $(BITBUCKET_APP_PASSWORD)
 
-          - task: TerraformTaskV4@4
-            displayName: 'Terraform Init with Azure Backend'
-            inputs:
-              provider: 'azurerm'
-              command: 'init'
-              backendServiceArm: 'Prod(202d4be6-e0dd-4b9e-84b7-e235d53271a8)'
-              backendAzureRmResourceGroupName: 'NEWRG'
-              backendAzureRmStorageAccountName: 'azurekssvc'
-              backendAzureRmContainerName: 'terraform'
-              backendAzureRmKey: 'terraform.tfstate'
-
   - stage: TerraformValidate
     displayName: 'Terraform Validate'
     dependsOn: TerraformInit
@@ -48,10 +34,7 @@ stages:
       - job: Validate
         displayName: 'Validate Terraform Files'
         steps:
-          - task: TerraformInstaller@1
-            displayName: 'Install Terraform'
-            inputs:
-              terraformVersion: 'latest'
+          - template: .pipelines/templates/terraform-init.yml
           - task: TerraformTaskV4@4
             displayName: 'Terraform Validate'
             inputs:
@@ -65,10 +48,7 @@ stages:
       - job: Plan
         displayName: 'Plan Terraform Deployment'
         steps:
-          - task: TerraformInstaller@1
-            displayName: 'Install Terraform'
-            inputs:
-              terraformVersion: 'latest'
+          - template: .pipelines/templates/terraform-init.yml
           - task: TerraformTaskV4@4
             displayName: 'Terraform Plan'
             inputs:
@@ -87,10 +67,7 @@ stages:
           runOnce:
             deploy:
               steps:
-                - task: TerraformInstaller@1
-                  displayName: 'Install Terraform'
-                  inputs:
-                   terraformVersion: 'latest'
+                - template: .pipelines/templates/terraform-init.yml
                 - task: TerraformTaskV4@4
                   displayName: 'Terraform Apply with Auto-Approve'
                   inputs:
@@ -110,10 +87,7 @@ stages:
           runOnce:
             deploy:
               steps:
-                - task: TerraformInstaller@1
-                  displayName: 'Install Terraform'
-                  inputs:
-                    terraformVersion: 'latest'
+                - template: .pipelines/templates/terraform-init.yml
                 - task: TerraformTaskV4@4
                   displayName: 'Terraform Destroy with Auto-Approve'
                   inputs:
