@@ -75,3 +75,9 @@ variable "subscription_id" {
   description = "The Azure subscription ID."
   type        = string
 }
+
+# variables.tf in the root module
+variable "terraform_principal_id" {
+  description = "The object ID of the Terraform identity (e.g., service principal)."
+  type        = string
+}
