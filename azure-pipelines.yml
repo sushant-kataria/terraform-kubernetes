@@ -1,7 +1,7 @@
 trigger:
   branches:
-    exclude:
-      - '*'  # Prevent CI on push
+    include:
+      - '*'  # Run pipeline on all branches (pushes)
 
 pr:
   branches:
