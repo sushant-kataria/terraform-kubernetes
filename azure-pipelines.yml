@@ -26,7 +26,7 @@ stages:
           - template: .pipelines/templates/terraform-init.yml
             parameters:
               displayName: 'Terraform Init with Azure Backend'
-              backendServiceArm: 'terraform-azure-prod'
+              backendServiceArm: 'Prod(202d4be6-e0dd-4b9e-84b7-e235d53271a8)'
 
           - script: |
               git config --global url."https://${BITBUCKET_USERNAME}:${BITBUCKET_APP_PASSWORD}@bitbucket.org/".insteadOf "https://bitbucket.org/"
@@ -70,7 +70,7 @@ stages:
             inputs:
               provider: 'azurerm'
               command: 'plan'
-              environmentServiceNameAzureRM: 'terraform-azure-prod'
+              environmentServiceNameAzureRM: 'Prod(202d4be6-e0dd-4b9e-84b7-e235d53271a8)'
 
   - stage: TerraformApply
     displayName: 'Terraform Apply'
@@ -93,7 +93,7 @@ stages:
                   inputs:
                     provider: 'azurerm'
                     command: 'apply'
-                    environmentServiceNameAzureRM: 'terraform-azure-prod'
+                    environmentServiceNameAzureRM: 'Prod(202d4be6-e0dd-4b9e-84b7-e235d53271a8)'
                     args: '-auto-approve'
 
   - stage: TerraformDestroy
@@ -117,5 +117,5 @@ stages:
                   inputs:
                     provider: 'azurerm'
                     command: 'destroy'
-                    environmentServiceNameAzureRM: 'terraform-azure-prod'
+                    environmentServiceNameAzureRM: 'Prod(202d4be6-e0dd-4b9e-84b7-e235d53271a8)'
                     args: '-auto-approve'
