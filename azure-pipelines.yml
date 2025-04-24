@@ -1,15 +1,20 @@
 trigger:
   branches:
+    exclude:
+      - '*'  # Prevent CI on push
+
+pr:
+  branches:
     include:
-      - main
+      - main  # Trigger only on PR to main
 
 pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  - group: bitbucket-auth  # Contains BITBUCKET_USERNAME and BITBUCKET_APP_PASSWORD
+  - group: bitbucket-auth  # BITBUCKET_USERNAME & BITBUCKET_APP_PASSWORD
   - name: destroy_initiate
-    value: 'false'         # Toggle to 'true' to enable destroy stage
+    value: 'false'          # Toggle true to enable destroy
 
 stages:
   - stage: TerraformInit
@@ -18,7 +23,9 @@ stages:
       - job: Init
         displayName: 'Initialize Terraform'
         steps:
-           - template: .pipelines/templates/terraform-init.yml
+          - template: .pipelines/templates/terraform-init.yml
+            parameters:
+              displayName: 'Terraform Init with Azure Backend'
 
           - script: |
               git config --global url."https://${BITBUCKET_USERNAME}:${BITBUCKET_APP_PASSWORD}@bitbucket.org/".insteadOf "https://bitbucket.org/"
@@ -30,11 +37,15 @@ stages:
   - stage: TerraformValidate
     displayName: 'Terraform Validate'
     dependsOn: TerraformInit
+    condition: succeeded()
     jobs:
       - job: Validate
         displayName: 'Validate Terraform Files'
         steps:
-          - template: .pipelines/templates/terraform-init.yml
+          - template: .pipelines/templates/terraform-install.yml
+            parameters:
+              terraformVersion: 'latest'
+
           - task: TerraformTaskV4@4
             displayName: 'Terraform Validate'
             inputs:
@@ -44,16 +55,21 @@ stages:
   - stage: TerraformPlan
     displayName: 'Terraform Plan'
     dependsOn: TerraformValidate
+    condition: succeeded()
     jobs:
       - job: Plan
         displayName: 'Plan Terraform Deployment'
         steps:
-          - template: .pipelines/templates/terraform-init.yml
+          - template: .pipelines/templates/terraform-install.yml
+            parameters:
+              terraformVersion: 'latest'
+
           - task: TerraformTaskV4@4
             displayName: 'Terraform Plan'
             inputs:
               provider: 'azurerm'
               command: 'plan'
+              environmentServiceNameAzureRM: 'Prod(202d4be6-e0dd-49be-84b7-e25d532f318a)'
 
   - stage: TerraformApply
     displayName: 'Terraform Apply'
@@ -62,17 +78,21 @@ stages:
     jobs:
       - deployment: Apply
         displayName: 'Apply Infrastructure Changes'
-        environment: 'prod'  # ✅ Add approval rule in DevOps Environments > prod
+        environment: 'prod'  # Manual approval in DevOps UI
         strategy:
           runOnce:
             deploy:
               steps:
-                - template: .pipelines/templates/terraform-init.yml
+                - template: .pipelines/templates/terraform-install.yml
+                  parameters:
+                    terraformVersion: 'latest'
+
                 - task: TerraformTaskV4@4
                   displayName: 'Terraform Apply with Auto-Approve'
                   inputs:
                     provider: 'azurerm'
                     command: 'apply'
+                    environmentServiceNameAzureRM: 'Prod(202d4be6-e0dd-49be-84b7-e25d532f318a)'
                     args: '-auto-approve'
 
   - stage: TerraformDestroy
@@ -82,15 +102,19 @@ stages:
     jobs:
       - deployment: Destroy
         displayName: 'Destroy Infrastructure'
-        environment: 'prod'  # ✅ Add approval rule in DevOps Environments > prod
+        environment: 'prod'  # Manual approval in DevOps UI
         strategy:
           runOnce:
             deploy:
               steps:
-                - template: .pipelines/templates/terraform-init.yml
+                - template: .pipelines/templates/terraform-install.yml
+                  parameters:
+                    terraformVersion: 'latest'
+
                 - task: TerraformTaskV4@4
                   displayName: 'Terraform Destroy with Auto-Approve'
                   inputs:
                     provider: 'azurerm'
                     command: 'destroy'
+                    environmentServiceNameAzureRM: 'Prod(202d4be6-e0dd-49be-84b7-e25d532f318a)'
                     args: '-auto-approve'
