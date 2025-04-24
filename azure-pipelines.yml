@@ -85,6 +85,12 @@ stages:
                     displayName: 'Terraform Init before Apply'
                     backendServiceArm: 'terraform-spn-akspipeline'
 
+                - script: |
+                      echo "Checking for stale locks..."
+                      terraform init
+                      terraform force-unlock $(LOCK_ID)
+                  displayName: "Force Unlock Terraform State"
+                  condition: always()
                 - task: TerraformTaskV4@4
                   displayName: 'Terraform Apply with Auto-Approve'
                   inputs:
