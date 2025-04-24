@@ -14,7 +14,7 @@ pool:
 variables:
   - group: bitbucket-auth
   - name: destroy_initiate
-    value: 'false'
+    value: 'true'
 
 stages:
   - stage: TerraformInit
