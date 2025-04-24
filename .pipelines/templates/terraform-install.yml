@@ -3,9 +3,9 @@ parameters:
   displayName: 'Terraform Init with Backend'
 
 steps:
-  - template: terraform-install.yml
-    parameters:
-      terraformVersion: 'latest'  # or 'latest'
+    inputs:
+    terraformVersion: 'latest'
+
 
   - task: TerraformTaskV4@4
     displayName: ${{ parameters.displayName }}
