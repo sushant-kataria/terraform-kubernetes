@@ -77,8 +77,8 @@ stages:
         environment: 'prod'
         strategy:
           runOnce:
-            deploy:
-              steps:
+            steps:
+                - checkout: self 
                 - template: .pipelines/templates/terraform-init.yml
                   parameters:
                     displayName: 'Terraform Init before Apply'
