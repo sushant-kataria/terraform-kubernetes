@@ -12,9 +12,9 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  - group: bitbucket-auth  # BITBUCKET_USERNAME & BITBUCKET_APP_PASSWORD
+  - group: bitbucket-auth
   - name: destroy_initiate
-    value: 'false'          # Toggle to 'true' to enable destroy
+    value: 'false'
 
 stages:
   - stage: TerraformInit
@@ -26,14 +26,7 @@ stages:
           - template: .pipelines/templates/terraform-init.yml
             parameters:
               displayName: 'Terraform Init with Azure Backend'
-              backendServiceArm: 'Prod(202d4be6-e0dd-4b9e-84b7-e235d53271a8)'
-
-          - script: |
-              git config --global url."https://${BITBUCKET_USERNAME}:${BITBUCKET_APP_PASSWORD}@bitbucket.org/".insteadOf "https://bitbucket.org/"
-            displayName: 'Configure Bitbucket Git'
-            env:
-              BITBUCKET_USERNAME: $(BITBUCKET_USERNAME)
-              BITBUCKET_APP_PASSWORD: $(BITBUCKET_APP_PASSWORD)
+              backendServiceArm: 'terraform-azure-prod'  # ✅ use friendly name
 
   - stage: TerraformValidate
     displayName: 'Terraform Validate'
@@ -70,7 +63,7 @@ stages:
             inputs:
               provider: 'azurerm'
               command: 'plan'
-              environmentServiceNameAzureRM: 'Prod(202d4be6-e0dd-4b9e-84b7-e235d53271a8)'
+              environmentServiceNameAzureRM: 'terraform-azure-prod'
 
   - stage: TerraformApply
     displayName: 'Terraform Apply'
@@ -79,7 +72,7 @@ stages:
     jobs:
       - deployment: Apply
         displayName: 'Apply Infrastructure Changes'
-        environment: 'prod'  # Add manual approval in Environments > prod
+        environment: 'prod'
         strategy:
           runOnce:
             deploy:
@@ -93,7 +86,7 @@ stages:
                   inputs:
                     provider: 'azurerm'
                     command: 'apply'
-                    environmentServiceNameAzureRM: 'Prod(202d4be6-e0dd-4b9e-84b7-e235d53271a8)'
+                    environmentServiceNameAzureRM: 'terraform-azure-prod'
                     args: '-auto-approve'
 
   - stage: TerraformDestroy
@@ -117,5 +110,5 @@ stages:
                   inputs:
                     provider: 'azurerm'
                     command: 'destroy'
-                    environmentServiceNameAzureRM: 'Prod(202d4be6-e0dd-4b9e-84b7-e235d53271a8)'
+                    environmentServiceNameAzureRM: 'terraform-azure-prod'
                     args: '-auto-approve'
