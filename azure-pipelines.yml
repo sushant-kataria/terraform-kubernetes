@@ -1,3 +1,11 @@
+resources:
+  repositories:
+  - repository: bitbucket
+    type: git
+    name: skataria21/terraformAKS
+    ref: main
+    endpoint: bitbucket-service
+
 trigger:
   branches:
     include:
