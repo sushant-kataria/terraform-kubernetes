@@ -20,8 +20,8 @@ steps:
     inputs:
       provider: 'azurerm'
       command: 'init'
-      backendServiceArm: ${{ parameters.backendServiceArm }}
+      backendServiceArm: 'terraform-spn-akspipeline'
       backendAzureRmResourceGroupName: 'NEWRG'
       backendAzureRmStorageAccountName: 'azurekssvc21'
       backendAzureRmContainerName: 'terraformstate'
-      backendAzureRmKey: 'terraform.tfstate'
+      backendAzureRmKey: 'aks/prod/terraform.tfstate'
