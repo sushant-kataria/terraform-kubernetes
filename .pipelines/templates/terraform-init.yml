@@ -1,6 +1,6 @@
 parameters:
   displayName: 'Terraform Init'
-  backendServiceArm: 'Prod(202d4be6-e0dd-4b9e-84b7-e235d53271a8)'
+  backendServiceArm: 'terraform-spn-akspipeline'
 
 steps:
   - task: TerraformInstaller@1
@@ -22,6 +22,6 @@ steps:
       command: 'init'
       backendServiceArm: ${{ parameters.backendServiceArm }}
       backendAzureRmResourceGroupName: 'NEWRG'
-      backendAzureRmStorageAccountName: 'azurekssvc'
-      backendAzureRmContainerName: 'terraform'
+      backendAzureRmStorageAccountName: 'azurekssvc21'
+      backendAzureRmContainerName: 'terraformstate'
       backendAzureRmKey: 'terraform.tfstate'
