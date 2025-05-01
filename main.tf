@@ -1,12 +1,12 @@
 module "resource_group" {
-  source = "git::https://bitbucket.org/shaurya123/azure-aks-modules.git//modules/resource_group?ref=main"
+  source = "git::https://bitbucket.org/skataria21/terraformAKS.git//modules/resource_group?ref=main"
   resource_group_name = var.resource_group_name
   location            = var.location
   tags                = var.tags
 }
 
 module "acr" {
-  source              = "git::https://bitbucket.org/shaurya123/azure-aks-modules.git//modules/acr?ref=main"
+  source              = "git::https://bitbucket.org/skataria21/terraformAKS.git//modules/acr?ref=main"
   name                = var.acr_name
   resource_group_name = module.resource_group.resource_group_name
   location            = var.location
@@ -18,7 +18,7 @@ module "acr" {
 
 
 module "network" {
- source = "git::https://bitbucket.org/shaurya123/azure-aks-modules.git//modules/network?ref=main"
+ source = "git::https://bitbucket.org/skataria21/terraformAKS.git//modules/network?ref=main"
   vnet_name                       = var.vnet_name
   vnet_address_space              = var.vnet_address_space
   aks_subnet_name                 = var.aks_subnet_name
@@ -35,7 +35,7 @@ module "network" {
 module "aks" {
   system_node_pool    = var.system_node_pool
   user_node_pool      = var.user_node_pool
-  source = "git::https://bitbucket.org/shaurya123/azure-aks-modules.git//modules/aks?ref=main"
+  source = "git::https://bitbucket.org/skataria21/terraformAKS.git//modules/aks?ref=main"
   resource_group_name = module.resource_group.resource_group_name
   location            = var.location
   cluster_name        = var.cluster_name
@@ -58,12 +58,11 @@ module "aks" {
   depends_on = [module.resource_group, module.acr]
 }
 
-// # Assign Owner role to the Terraform identity at the subscription level
-// resource "azurerm_role_assignment" "terraform_owner" {
-//   scope                = "/subscriptions/${var.subscription_id}"
-//   role_definition_name = "Owner"
-//   principal_id         = var.terraform_principal_id # Replace with the object ID of the Terraform identity
-// }
+resource "azurerm_role_assignment" "terraform_owner" {
+  scope                = "/subscriptions/${var.subscription_id}"
+  role_definition_name = "Owner"
+  principal_id         = var.terraform_principal_id   
+}
 
 resource "azurerm_role_assignment" "aks_acr_pull" {
   role_definition_name = "AcrPull"
