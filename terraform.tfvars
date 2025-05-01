@@ -68,4 +68,4 @@ user_node_pool = {
 service_cidr   = "10.240.0.0/16"
 dns_service_ip = "10.240.0.10"
 subscription_id = "d1fc1672-f56d-4f3d-b6ab-0f725d80bef1"
-terraform_principal_id = "444c775e-f928-4b84-b6d6-018ca2af7d33"
+terraform_principal_id = "0d4ba7db-3b60-4c11-8235-3837d73af26f"
