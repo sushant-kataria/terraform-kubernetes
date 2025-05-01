@@ -1,12 +1,12 @@
 module "resource_group" {
-  source = "git::https://bitbucket.org/skataria21/terraformAKS.git//modules/resource_group?ref=main"
+  source = "git::https://bitbucket.org/skataria21/terraformaks.git//modules/resource_group?ref=371186f8419c36d57eac750b32c02c34a56e8e93"
   resource_group_name = var.resource_group_name
   location            = var.location
   tags                = var.tags
 }
 
 module "acr" {
-  source              = "git::https://bitbucket.org/skataria21/terraformAKS.git//modules/acr?ref=main"
+  source              = "git::https://bitbucket.org/skataria21/terraformaks.git//modules/acr?ref=371186f8419c36d57eac750b32c02c34a56e8e93"
   name                = var.acr_name
   resource_group_name = module.resource_group.resource_group_name
   location            = var.location
@@ -18,7 +18,7 @@ module "acr" {
 
 
 module "network" {
- source = "git::https://bitbucket.org/skataria21/terraformAKS.git//modules/network?ref=main"
+ source = "git::https://bitbucket.org/skataria21/terraformaks.git//modules/network?ref=371186f8419c36d57eac750b32c02c34a56e8e93"
   vnet_name                       = var.vnet_name
   vnet_address_space              = var.vnet_address_space
   aks_subnet_name                 = var.aks_subnet_name
@@ -35,7 +35,7 @@ module "network" {
 module "aks" {
   system_node_pool    = var.system_node_pool
   user_node_pool      = var.user_node_pool
-  source = "git::https://bitbucket.org/skataria21/terraformAKS.git//modules/aks?ref=main"
+  source = "git::https://bitbucket.org/skataria21/terraformaks.git//modules/aks?ref=371186f8419c36d57eac750b32c02c34a56e8e93"
   resource_group_name = module.resource_group.resource_group_name
   location            = var.location
   cluster_name        = var.cluster_name
