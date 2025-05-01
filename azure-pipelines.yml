@@ -4,7 +4,7 @@ resources:
     type: git
     name: skataria21/terraformAKS
     ref: main
-    endpoint: bitbucket-service
+    endpoint: skataria21-admin
 
 trigger:
   branches:
